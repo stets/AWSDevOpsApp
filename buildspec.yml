@@ -4,9 +4,10 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
+      - echo Showing ENV variables for debug purposes
+      - printenv
       - aws --version
       - $(aws ecr get-login --region us-east-2 --no-include-email)
-      - REPOSITORY_URI=961368246545.dkr.ecr.us-east-2.amazonaws.com/stets
   build:
     commands:
       - echo Build started on `date`
@@ -14,7 +15,6 @@ phases:
       - docker build -t stets .
   post_build:
     commands:
-      - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - docker tag stets:latest 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:latest
-      - docker push 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:latest
+      - docker tag stets:latest $REPO_URL:latest
+      - docker push $REPO_URL:latest

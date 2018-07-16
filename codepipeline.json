@@ -12,7 +12,10 @@
                     "y": 190
                 },
                 "z": 0,
-                "embeds": []
+                "embeds": [],
+                "dependson": [
+                    "2f659690-0e7d-459b-86ff-f65b38eebed0"
+                ]
             },
             "2f659690-0e7d-459b-86ff-f65b38eebed0": {
                 "size": {
@@ -20,7 +23,7 @@
                     "height": 60
                 },
                 "position": {
-                    "x": 440,
+                    "x": 430,
                     "y": 190
                 },
                 "z": 0,
@@ -31,6 +34,7 @@
     "Resources": {
         "DockerCodeBuild": {
             "Type": "AWS::CodeBuild::Project",
+            "DependsOn": "CodebuildRole",
             "Properties": {
                 "Environment": {
                     "Type": "LINUX_CONTAINER",
@@ -43,11 +47,15 @@
                     "BuildSpec": "buildspec.yml"
                 },
                 "Description": "Build Dockerfile",
-                "ServiceRole": "arn:aws:iam::961368246545:role/service-role/codebuild-Docker-service-role",
+                "ServiceRole": {
+                    "Ref": "CodebuildRole"
+                },
                 "Artifacts": {
                     "Type": "no_artifacts"
                 },
-                "Triggers": {"Webhook":"True"}
+                "Triggers": {
+                    "Webhook": "True"
+                }
             },
             "Metadata": {
                 "AWS::CloudFormation::Designer": {
