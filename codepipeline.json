@@ -1,0 +1,105 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Metadata": {
+        "AWS::CloudFormation::Designer": {
+            "6b45b3a9-7bfd-48c5-809d-9d20e74b4103": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 530,
+                    "y": 190
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "2f659690-0e7d-459b-86ff-f65b38eebed0": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 440,
+                    "y": 190
+                },
+                "z": 0,
+                "embeds": []
+            }
+        }
+    },
+    "Resources": {
+        "DockerCodeBuild": {
+            "Type": "AWS::CodeBuild::Project",
+            "Properties": {
+                "Environment": {
+                    "Type": "LINUX_CONTAINER",
+                    "ComputeType": "BUILD_GENERAL1_SMALL",
+                    "Image": "aws/codebuild/docker:17.09.0"
+                },
+                "Source": {
+                    "Location": "https://github.com/stets/AWSDevOpsApp",
+                    "Type": "GITHUB",
+                    "BuildSpec": "buildspec.yml"
+                },
+                "Description": "Build Dockerfile",
+                "ServiceRole": "arn:aws:iam::961368246545:role/service-role/codebuild-Docker-service-role",
+                "Artifacts": {
+                    "Type": "no_artifacts"
+                },
+                "Triggers": {"Webhook":"True"}
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "6b45b3a9-7bfd-48c5-809d-9d20e74b4103"
+                }
+            }
+        },
+        "CodebuildRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "codebuild.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "codebuild-service",
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": "logs:*",
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": "ecr:*",
+                                    "Resource": "*"
+                                }
+                            ],
+                            "Version": "2012-10-17"
+                        }
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "2f659690-0e7d-459b-86ff-f65b38eebed0"
+                }
+            }
+        }
+    }
+}
