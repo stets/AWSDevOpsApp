@@ -12,10 +12,7 @@
                     "y": 190
                 },
                 "z": 0,
-                "embeds": [],
-                "dependson": [
-                    "2f659690-0e7d-459b-86ff-f65b38eebed0"
-                ]
+                "embeds": []
             },
             "2f659690-0e7d-459b-86ff-f65b38eebed0": {
                 "size": {
@@ -25,6 +22,18 @@
                 "position": {
                     "x": 430,
                     "y": 190
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "ccd14556-60b6-4aa8-856d-b1fe97241cd4": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 530,
+                    "y": 270
                 },
                 "z": 0,
                 "embeds": []
@@ -39,7 +48,11 @@
                 "Environment": {
                     "Type": "LINUX_CONTAINER",
                     "ComputeType": "BUILD_GENERAL1_SMALL",
-                    "Image": "aws/codebuild/docker:17.09.0"
+                    "Image": "aws/codebuild/docker:17.09.0",
+                    "EnvironmentVariables": [{
+                        "Name": "REPO_URL",
+                        "Value": {"Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepo}"}
+                    }]
                 },
                 "Source": {
                     "Location": "https://github.com/stets/AWSDevOpsApp",
@@ -106,6 +119,19 @@
             "Metadata": {
                 "AWS::CloudFormation::Designer": {
                     "id": "2f659690-0e7d-459b-86ff-f65b38eebed0"
+                }
+            }
+        },
+        "ECRRepo": {
+            "Type": "AWS::ECR::Repository",
+            "Properties": {
+                "RepositoryName": {
+                    "Ref": "AWS::StackName"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "ccd14556-60b6-4aa8-856d-b1fe97241cd4"
                 }
             }
         }
