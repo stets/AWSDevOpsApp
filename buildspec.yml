@@ -16,6 +16,5 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI:latest
-artifacts:
-    files: imagedefinitions.json
+      - docker tag stets:latest 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:latest
+      - docker push 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:latest
