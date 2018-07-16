@@ -16,5 +16,5 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - docker tag stets:latest 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:latest
-      - docker push 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:latest
+      - docker tag stets:staging 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:staging
+      - docker push 961368246545.dkr.ecr.us-east-2.amazonaws.com/stets:staging
