@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  'AWS::CloudFormation::Designer':
+    1c0b11d5-adcd-4efe-af00-1aac30a2fdfa:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 570
+        'y': 150
+      z: 0
+      embeds: []
+    395664cf-0c0d-40d6-b193-245728dcdec9:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 690
+        'y': 150
+      z: 0
+      embeds: []
+Resources:
+  FlaskRepo:
+    Type: 'AWS::ECR::Repository'
+    Properties: {}
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 1c0b11d5-adcd-4efe-af00-1aac30a2fdfa
+  CCR1GZIG:
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Source:
+        Type: CODEPIPELINE
+        Buildspec: |
+        version: 0.2
+
+        phases:
+          pre_build:
+            commands:
+              - echo Logging in to Amazon ECR...
+              - aws --version
+              - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+              - REPOSITORY_URI=012345678910.dkr.ecr.us-west-2.amazonaws.com/hello-world
+              - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+          build:
+            commands:
+              - echo Build started on `date`
+              - echo Building the Docker image...          
+              - docker build -t $REPOSITORY_URI:latest .
+              - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+          post_build:
+            commands:
+              - echo Build completed on `date`
+              - echo Pushing the Docker images...
+              - docker push $REPOSITORY_URI:latest
+              - docker push $REPOSITORY_URI:$IMAGE_TAG
+              - echo Writing image definitions file...
+              - printf '[{"name":"hello-world","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+        artifacts:
+            files: imagedefinitions.json
+            
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 395664cf-0c0d-40d6-b193-245728dcdec9
