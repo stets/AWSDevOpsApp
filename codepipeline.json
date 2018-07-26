@@ -20,8 +20,8 @@
                     "height": 60
                 },
                 "position": {
-                    "x": 430,
-                    "y": 190
+                    "x": 530,
+                    "y": 80
                 },
                 "z": 0,
                 "embeds": []
@@ -37,6 +37,33 @@
                 },
                 "z": 0,
                 "embeds": []
+            },
+            "50f19005-d61c-4a74-b8f2-20f9e1edc1a1": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 390,
+                    "y": 270
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "d1e4ab85-bebf-4725-b559-de0ab59be218": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 390,
+                    "y": 190
+                },
+                "z": 0,
+                "embeds": [],
+                "dependson": [
+                    "6b45b3a9-7bfd-48c5-809d-9d20e74b4103"
+                ]
             }
         }
     },
@@ -49,10 +76,14 @@
                     "Type": "LINUX_CONTAINER",
                     "ComputeType": "BUILD_GENERAL1_SMALL",
                     "Image": "aws/codebuild/docker:17.09.0",
-                    "EnvironmentVariables": [{
-                        "Name": "REPO_URL",
-                        "Value": {"Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepo}"}
-                    }]
+                    "EnvironmentVariables": [
+                        {
+                            "Name": "REPO_URL",
+                            "Value": {
+                                "Ref": "ImageURI"
+                            }
+                        }
+                    ]
                 },
                 "Source": {
                     "Location": "https://github.com/stets/AWSDevOpsApp",
@@ -134,6 +165,51 @@
                     "id": "ccd14556-60b6-4aa8-856d-b1fe97241cd4"
                 }
             }
+        },
+        "ECSCluster": {
+            "Type": "AWS::ECS::Cluster",
+            "Properties": {
+                "ClusterName": "Default"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "50f19005-d61c-4a74-b8f2-20f9e1edc1a1"
+                }
+            }
+        },
+        "TaskDef": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "DependsOn": "DockerCodeBuild",
+            "Properties": {
+                "ContainerDefinitions": [
+                    {
+                        "Image": {
+                            "Ref": "ImageURI"
+                        },
+                        "Name": "FlaskAPI",
+                        "PortMappings": [
+                            {
+                                "ContainerPort": "80",
+                                "HostPort": "80"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "d1e4ab85-bebf-4725-b559-de0ab59be218"
+                }
+            }
+        }
+    },
+    "Parameters": {
+        "ImageURI": {
+            "Type": "String",
+            "Default": {
+                "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepo}:latest"
+            },
+            "Description": "Location of the docker image in ECS"
         }
     }
 }
