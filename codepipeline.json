@@ -80,7 +80,7 @@
                         {
                             "Name": "REPO_URL",
                             "Value": {
-                                "Ref": "ImageURI"
+                                "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepo}"
                             }
                         }
                     ]
@@ -184,7 +184,7 @@
                 "ContainerDefinitions": [
                     {
                         "Image": {
-                            "Ref": "ImageURI"
+                            "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepo}:latest"
                         },
                         "Name": "FlaskAPI",
                         "PortMappings": [
@@ -204,12 +204,6 @@
         }
     },
     "Parameters": {
-        "ImageURI": {
-            "Type": "String",
-            "Default": {
-                "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepo}:latest"
-            },
-            "Description": "Location of the docker image in ECS"
-        }
+      
     }
 }

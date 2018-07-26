@@ -16,5 +16,5 @@ phases:
   post_build:
     commands:
       - echo Pushing the Docker images...
-      - docker tag stets:latest $REPO_URL
-      - docker push $REPO_URL
+      - docker tag stets:latest $REPO_URL:latest
+      - docker push $REPO_URL:latest
